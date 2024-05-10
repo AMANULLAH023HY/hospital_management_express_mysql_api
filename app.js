@@ -2,6 +2,10 @@ const express =require(  "express");
 const dotenv =require ("dotenv");
 const bodyParser =require("body-parser");
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser')
+
+const db = require('./config/db')
+
 
 const userRoute = require('./routes/userRoute')
 
@@ -11,6 +15,7 @@ const app = express();
 // Middleware 
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(morgan('combine'));
 
 
