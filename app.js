@@ -1,12 +1,49 @@
+// const express = require("express");
+// const dotenv = require("dotenv");
+// const bodyParser = require("body-parser");
+// const morgan = require("morgan");
+// const cookieParser = require("cookie-parser");
+
+// const db = require("./config/db");
+
+// const userRoute = require("./routes/userRoute");
+// const session = require("express-session");
+
+// dotenv.config();
+
+// const app = express();
+// // Middleware
+// app.use(express.json());
+// app.use(bodyParser.json());
+// app.use(cookieParser());
+// app.use(morgan());
+
+// // ROUTES
+
+// app.use(
+//   session({
+//     secret: "secret",
+//     resave: true,
+//     saveUninitialized: true,
+//   })
+// );
+
+// app.use("/api/user", userRoute);
+
+// app.all("*", (req, res) => {
+//   res.status(404).send("OOPS! 404 page not found");
+// });
+
+// module.exports = app;
+
+
+
 const express = require("express");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
-
-const db = require("./config/db");
-
-const userRoute = require("./routes/userRoute");
+const session = require("express-session");
 
 dotenv.config();
 
@@ -15,10 +52,19 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(morgan("combine"));
+app.use(morgan());
+
+// Session Middleware
+app.use(
+  session({
+    secret: "secret",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
 // ROUTES
-
+const userRoute = require("./routes/userRoute");
 app.use("/api/user", userRoute);
 
 app.all("*", (req, res) => {
@@ -26,3 +72,4 @@ app.all("*", (req, res) => {
 });
 
 module.exports = app;
+
