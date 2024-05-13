@@ -134,39 +134,7 @@ const signinController = async (req, res) => {
   }
 };
 
-// Verify user controller
-
-// const verifyController = (req, res) => {
-//   const id = req.body.id;
-//   const token = req.body.token;
-//   try {
-// // Function match toke
-
-//     db.matchToken(id, token, (err, result) => {
-//       console.log(result);
-
-//       if (result.length > 0) {
-//         const email = result[0].email;
-//         const email_status = "verified";
-
-// // Function update verify 
-
-//         db.updateverify(email, email_status, (err, result) => {
-//           res.json("Email verified");
-//         });
-//       } else {
-//         res.send("Token did not match");
-//       }
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Internal server Error",
-//       error: error.message,
-//     });
-//   }
-// };
-
-
+// Email verification controller
 const verifyController = (req, res) => {
   const id = req.body.id;
   const token = req.body.token;
@@ -185,8 +153,8 @@ const verifyController = (req, res) => {
       if (result && result.length > 0) {
         const email = result[0].email;
         const email_status = "verified";
-        
-        // Function update verify 
+
+        // Function update verify
         db.updateverify(email, email_status, (err, result) => {
           if (err) {
             console.error("Error executing updateverify:", err);
@@ -210,5 +178,68 @@ const verifyController = (req, res) => {
   }
 };
 
+// Reset password controller
+const resetController = (req, res) => {
+  const email = req.body.email;
+  try {
+    // Find one user function
+    db.findOne(email, (err, result) => {
+      if (!result) {
+        return res.status(402).json({ message: "Email doesn't exist" });
+      }
 
-module.exports = { signupController, signinController, verifyController };
+      const id = result[0].id;
+      const token = randomToken(8);
+      // Insert temporary token function
+      db.temp(id, email, token, (err, resultTwo) => {
+        const data = "this is user";
+        const output = `<p>Dear user</p>,
+          <p>You are receiving this email because you requested to reset your password</p>
+          <ul>
+            <li>User Id: ${id}</li>
+            <li>Token: ${token}</li>
+          </ul>`;
+
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "",
+            pass: "",
+          },
+        });
+
+        const mailOption = {
+          from: "HSM Team",
+          to: email,
+          subject: "Password Reset",
+          // html: output
+          data: data,
+        };
+
+        transporter.sendMail(mailOption, (err, info) => {
+          if (err) {
+            return res.status(500).json(err); // Return the error response
+          } else {
+            return res.json(info); // Return the success response
+          }
+        });
+      });
+    });
+
+    return res
+      .status(200)
+      .json({ message: "A token has been sent to your email address" }); // Return the success response
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message }); // Return the error response
+  }
+};
+
+module.exports = {
+  signupController,
+  signinController,
+  verifyController,
+  resetController,
+};

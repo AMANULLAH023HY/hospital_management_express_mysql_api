@@ -39,7 +39,8 @@ module.exports.signup = (username, email, password, status, callback) => {
 
 // Function to verify user
 module.exports.verify = (username, email, token, callback) => {
-  const query = "INSERT INTO `verify` (username, email, token) VALUES (?, ?, ?)";
+  const query =
+    "INSERT INTO `verify` (username, email, token) VALUES (?, ?, ?)";
   connectDB.query(query, [username, email, token], callback);
 };
 
@@ -49,35 +50,30 @@ module.exports.getUserId = (email, callback) => {
   connectDB.query(query, email, callback);
 };
 
-
-// // Function match toke
-// module.exports.matchToken = (id,token, callback) => {
-//   const query = "SELECT * FROM `verify` WHERE token = ? AND id = ?";
-//   connectDB.query(query, id,token, callback);
-//   console.log(query)
-// };
-
-// // Function update verify 
-
-// module.exports.updateverify = (email, email_status, callback) => {
-//   const query = "UPDATE  `users` SET `email_status` = ? WHERE `email` = ?";
-//   connectDB.query(query, id,token, callback);
-//   console.log(query)
-// };
-
-
-
-
 // Function match token
 module.exports.matchToken = (id, token, callback) => {
   const query = "SELECT * FROM `verify` WHERE token = ? AND id = ?";
-  connectDB.query(query, [token, id], callback); // Corrected order of arguments
+  connectDB.query(query, [token, id], callback);
 };
 
-// Function update verify 
+// Function update verify
 module.exports.updateverify = (email, email_status, callback) => {
   const query = "UPDATE `users` SET `email_status` = ? WHERE `email` = ?";
-  connectDB.query(query, [email_status, email], callback); // Corrected order of arguments
+  connectDB.query(query, [email_status, email], callback);
 };
 
+// Find one user function
 
+module.exports.findOne = (email, callback) => {
+  const query = "SELECT * FROM user WHERE email = '" + email + "' ";
+  connectDB.query(query, email, callback);
+  console.log(query);
+};
+
+// Find one user function
+
+module.exports.temp = (id, email, token, callback) => {
+  const query = "INSERT INTO `temp` (`id`, `id`, `token`)VALUES(?,?,?) ";
+  connectDB.query(query, [id, email, token], callback);
+  console.log(query);
+};
