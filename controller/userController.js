@@ -228,14 +228,29 @@ const resetController = (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "A token has been sent to your email address" }); // Return the success response
+      .json({ message: "A token has been sent to your email address" });
   } catch (error) {
     console.error("Internal Server Error:", error);
     return res
       .status(500)
-      .json({ message: "Internal Server Error", error: error.message }); // Return the error response
+      .json({ message: "Internal Server Error", error: error.message }); 
   }
 };
+
+
+// Doctor controller
+const doctorController = (req,res)=>{
+  try {
+    
+    
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message }); 
+  
+  }
+}
 
 module.exports = {
   signupController,
