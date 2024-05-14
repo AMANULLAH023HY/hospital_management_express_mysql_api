@@ -4,34 +4,34 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const notMatchController = (req, res, next) => {
-  try {
-    if (req.cookie["username"] == null) {
-      res.status(200).json({
-        message: "Redirect to login page ",
-      });
-    } else {
-      next();
-    }
-  } catch (error) {
-    res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
-};
+// const notMatchController = (req, res, next) => {
+//   try {
+//     if (req.cookie["username"] == null) {
+//       res.status(200).json({
+//         message: "Redirect to login page ",
+//       });
+//     } else {
+//       next();
+//     }
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Internal server error",
+//       error: error.message,
+//     });
+//   }
+// };
 
-const storage = multer.diskStorage({
-  destination: (req, file, cd) => {
-    cd(null, "public/assets/images/upload_image");
-  },
-  filename: (req, file, cd) => {
-    console.log(file);
-    cd(null, file.originalname);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, cd) => {
+//     cd(null, "public/assets/images/upload_image");
+//   },
+//   filename: (req, file, cd) => {
+//     console.log(file);
+//     cd(null, file.originalname);
+//   },
+// });
 
-module.exports.upload = multer({ storage: storage });
+// module.exports.upload = multer({ storage: storage });
 
 // get Doctor Controller
 
@@ -83,7 +83,6 @@ const addDoctorController = (req, res) => {
       req.body.address,
       req.body.phone,
       req.body.department,
-      req.file.filename,
       req.body.biography
     );
     if (db.addDoctor) {
@@ -100,14 +99,14 @@ const addDoctorController = (req, res) => {
   }
 };
 
-//   Edit  get doctor controller
+//   get single doctor controller
 
-const editGetDocterController = (req, res) => {
+const getSingleDocterController = (req, res) => {
   try {
     const id = req.params.id;
     db.getDoctorById(id, (err, result) => {
       res.status(200).json({
-        message: "edit get Doctor successfully!",
+        message: "get single Doctor details!",
         doctor: result,
       });
     });
@@ -119,8 +118,7 @@ const editGetDocterController = (req, res) => {
   }
 };
 
-// edit doctor controller
-
+// update doctor details controller
 const editDocterController = (req, res) => {
   try {
     const id = req.params.id;
@@ -133,16 +131,20 @@ const editDocterController = (req, res) => {
       req.body.address,
       req.body.phone,
       req.body.department,
-      req.file.filename,
       req.body.biography,
+      id,
       (err, result) => {
         if (err) {
-          throw err;
+          res.status(402).json({
+            message: "Something went wrong",
+            error: err.message,
+          });
+        } else {
+          res.status(200).json({
+            message: "Doctor details updated successfully!",
+            list: result,
+          });
         }
-
-        res.status(200).json({
-          message: "docter details update successfully!",
-        });
       }
     );
   } catch (error) {
@@ -153,64 +155,59 @@ const editDocterController = (req, res) => {
   }
 };
 
-
-
 // delete doctor controller
+const deleteDocterController = (req, res) => {
+  try {
+    const id = req.params.id;
 
-const deleteDocterController = (req,res)=>{
-    try {
-        const id = req.params.id;
-
-        db.deleteDoctror(id,(err,result)=>{
-            res.status(201).json({
-                message:"delete doctor details successfully!"
-            })
-        })
-        
-    } catch (error) {
-        res.status(500).json({
-            message: "Internal server error",
-            error: error.message,
-          });  
-    }
-}
-
+    db.deleteDoctror(id, (err, result) => {
+      if (err) {
+        res.status(402).json({
+          message: "something went wrong!",
+          error: err.message,
+        });
+      }
+      res.status(201).json({
+        message: "delete doctor details successfully!",
+        list: result,
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 // Search doctor controller
 
-const searchDoctorController = (req,res)=>{
+const searchDoctorController = (req, res) => {
+  try {
+    const key = req.body.search;
 
-    try {
-        const key = req.body.search;
+    db.searchDoc(key, function (err, result) {
+      console.log(result);
 
-        db.searchDoc(key,function(err,result){
-            console.log(result);
-            
-            res.status(200).json({
-                message:"search doctor by key!",
-                list:result
-
-            })
-        });
-        
-    } catch (error) {
-        res.status(500).json({
-            message: "Internal server error",
-            error: error.message,
-          });  
-    }
-
-
-}
-
+      res.status(200).json({
+        message: "search doctor by key!",
+        list: result,
+      });
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
-  notMatchController,
   getDoctorController,
   getDoctorDepController,
   addDoctorController,
-  editGetDocterController,
+  getSingleDocterController,
   editDocterController,
   deleteDocterController,
-  searchDoctorController
+  searchDoctorController,
 };
