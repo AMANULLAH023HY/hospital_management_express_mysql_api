@@ -33,6 +33,10 @@ app.use("/api/user", userRoute);
 const doctorRoute = require("./routes/doctorRoute");
 app.use("/api/doctor", doctorRoute);
 
+// Employee routes
+const employeeRoute = require("./routes/employeeRoute");
+app.use("/api/employee", employeeRoute);
+
 app.all("*", (req, res) => {
   res.status(404).send("OOPS! 404 page not found");
 });
