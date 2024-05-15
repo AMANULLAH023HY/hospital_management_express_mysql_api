@@ -1,33 +1,32 @@
 const db = require("../models/Emplorees");
 const connectDB = require("../config/db");
 
-// add new employee Controller
+// // add new employee Controller
 const addEmpController = (req, res) => {
   try {
     const name = req.body.name;
     const email = req.body.email;
     const contact = req.body.contact;
-    const json_date = req.body.date;
+    const date = req.body.date;
     const role = req.body.role;
     const salary = req.body.salary;
 
-    db.addEpm(name, email, contact, json_date, role, salary),
-      (err, result) => {
-        if (err) {
-          res.status(402).json({
-            message: "Something went wrong!",
-            error: err.message,
-          });
-        } else {
-          res.status(201).json({
-            message: "add new employee successfully!",
-            employee: result,
-          });
-        }
-      };
+    db.addEpm(name, email, contact, date, role, salary, (err, result) => {
+      if (err) {
+        res.status(402).json({
+          message: "Something went wrong!",
+          error: err.message,
+        });
+      } else {
+        res.status(201).json({
+          message: "Add new employee successfully!",
+          employee: result,
+        });
+      }
+    });
   } catch (error) {
     res.status(500).json({
-      message: "Internal serber Error",
+      message: "Internal server Error",
       error: error.message,
     });
   }
@@ -84,18 +83,26 @@ const getSingleEmpController = (req, res) => {
 };
 
 // Update employee details Controller
+
 const updateEmpController = (req, res) => {
   try {
     const name = req.body.name;
     const email = req.body.email;
     const contact = req.body.contact;
-    const json_date = req.body.date;
+    const date = req.body.date;
     const role = req.body.role;
     const salary = req.body.salary;
 
     const id = req.params.id;
 
-    db.updateEpm(id, name, email, contact, json_date, role, salary),
+    db.updateEpmDetails(
+      id,
+      name,
+      email,
+      contact,
+      date,
+      role,
+      salary,
       (err, result) => {
         if (err) {
           res.status(402).json({
@@ -104,14 +111,15 @@ const updateEmpController = (req, res) => {
           });
         } else {
           res.status(201).json({
-            message: "Upadte employee details successfully!",
+            message: "Update employee details successfully!",
             employee: result,
           });
         }
-      };
+      }
+    );
   } catch (error) {
     res.status(500).json({
-      message: "Internal serber Error",
+      message: "Internal server Error",
       error: error.message,
     });
   }
@@ -120,7 +128,7 @@ const updateEmpController = (req, res) => {
 // Delete employee Controller
 const deleteEmpController = (req, res) => {
   try {
-    const id = req.body.id;
+    const id = req.params.id;
 
     db.deleteEmp(id, (err, result) => {
       if (err) {
@@ -253,26 +261,26 @@ const deleteEmpLeaveController = (req, res) => {
   }
 };
 
-// Search employe 
+// Search employe
 const searchEmpController = (req, res) => {
-    try {
-      const key = req.body.search;
-  
-      db.searchEmp(key, function (err, result) {
-        console.log(result);
-  
-        res.status(200).json({
-          message: "search Employee by key!",
-          list: result,
-        });
+  try {
+    const key = req.body.search;
+
+    db.searchEmp(key, function (err, result) {
+      console.log(result);
+
+      res.status(200).json({
+        message: "search Employee by key!",
+        list: result,
       });
-    } catch (error) {
-      res.status(500).json({
-        message: "Internal server error",
-        error: error.message,
-      });
-    }
-  };
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   addEmpController,
@@ -284,5 +292,5 @@ module.exports = {
   addLeaveEmpController,
   updateLeaveEmpController,
   deleteEmpLeaveController,
-  searchEmpController
+  searchEmpController,
 };

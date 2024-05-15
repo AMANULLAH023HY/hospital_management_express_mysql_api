@@ -3,22 +3,24 @@ const connectDB = require("../config/db");
 // add employee Query
 
 module.exports.addEpm = (
-    name,
-    email, 
-    contact, 
-    json_date, 
-    role, 
-    callback) => {
+  name,
+  email,
+  contact,
+  date,
+  role,
+  salary,
+  callback
+) => {
   const query =
-    "INSERT INTO `employee`(`name`, `email`,`contact`,`json_date`,`role`)VLUES(?, ?, ?, ?, ?)";
+    "INSERT INTO `employee`(`name`, `email`,`contact`,`date`,`role`, `salary`)VALUES(?, ?, ?, ?, ?,?)";
 
-  connectDB.query(query, [name, email, contact, json_date, role], callback);
+  connectDB.query(query, [name, email, contact, date, role, salary], callback);
 
   console.log(query);
 };
 
 // get single employee by id query
-module.exports.getEmpbyId = function (id, callback) {
+module.exports.getSingleEmp = function (id, callback) {
   var query = "SELECT * FROM employee WHERE id =" + id;
   connectDB.query(query, callback);
   console.log(query);
@@ -35,19 +37,24 @@ module.exports.getAllEmp = (callback) => {
 
 // upadte employee query
 
-module.exports.updateEpm = (
+module.exports.updateEpmDetails = (
   name,
   email,
   contact,
-  json_date,
+  date,
   role,
+  salary,
   id,
   callback
 ) => {
   const query =
-    "UPDATE `employee` SET (`name`, `email`,`contact`,`json_date`,`role`, `role`,)VLUES(?, ?, ?, ?, ?)";
+    "UPDATE `employee` SET `name` = ?, `email` = ?, `contact` = ?, `date` = ?, `role` = ?, `salary` = ? WHERE `id` = ?";
 
-  connectDB.query(query, [name, email, contact, json_date, role], callback);
+  connectDB.query(
+    query,
+    [name, email, contact, date, role, salary, id],
+    callback
+  );
 
   console.log(query);
 };
@@ -57,7 +64,7 @@ module.exports.updateEpm = (
 module.exports.deleteEmp = (id, callback) => {
   const query = "DELETE FROM `employee` WHERE id = ?";
 
-  connectDB.query(query, callback);
+  connectDB.query(query, [id], callback);
 
   console.log(query);
 };
